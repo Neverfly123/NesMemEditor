@@ -1378,11 +1378,11 @@ PC:
 			bne :-
 		rts
 
-	TableConvert:	;convert for v-blank input, in order to minimize the table scan cycle
+TableConvert:	;convert for v-blank input, in order to minimize the table scan cycle
 		ldx #0
-		ldy #128
+		ldy #112
 		lda nmtUpdateCount
-		cmp #6
+		cmp #7
 		bne @Table1
 		:
 		lda nmtBuffer, x
@@ -1395,86 +1395,100 @@ PC:
 		sta PPU_nmtAdd
 		jmp @DECnmtUpdateCount
 	@Table1:
-		cmp #5
+		cmp #6
 		bne @Table2
 		:
-		lda nmtBuffer+128, x
+		lda nmtBuffer+112, x
 		sta nmtBufferConvert-1, y
 		inx
 		dey
 		bne :-
 		lda #$20
 		sta PPU_nmtAdd+1
-		LDA #$a0
+		LDA #$90
 		sta PPU_nmtAdd
 		jmp @DECnmtUpdateCount
 	@Table2:
-		cmp #4
+		cmp #5
 		bne @Table3
 		:
-		lda nmtBuffer+256, x
+		lda nmtBuffer+224, x
 		sta nmtBufferConvert-1, y
 		inx
 		dey
 		bne :-
 		lda #$21
 		sta PPU_nmtAdd+1
-		LDA #$20
+		LDA #$00
 		sta PPU_nmtAdd
 		jmp @DECnmtUpdateCount
 	@Table3:	
-		cmp #3
+		cmp #4
 		bne @Table4
 		:
-		lda nmtBuffer+384, x
+		lda nmtBuffer+336, x
 		sta nmtBufferConvert-1, y
 		inx
 		dey
 		bne :-
 		lda #$21
 		sta PPU_nmtAdd+1
-		LDA #$a0
+		LDA #$70
 		sta PPU_nmtAdd
 		jmp @DECnmtUpdateCount
 	@Table4:
-		cmp #2
+		cmp #3
 		bne @Table5
 		:
-		lda nmtBuffer+512, x
+		lda nmtBuffer+448, x
 		sta nmtBufferConvert-1, y
 		inx
 		dey
 		bne :-
-		lda #$22
+		lda #$21
 		sta PPU_nmtAdd+1
-		LDA #$20
+		LDA #$E0
 		sta PPU_nmtAdd
 		jmp @DECnmtUpdateCount
 	@Table5:
-		cmp #1
+		cmp #2
 		bne @Table6
 		:
-		lda nmtBuffer+640, x
+		lda nmtBuffer+560, x
 		sta nmtBufferConvert-1, y
 		inx
 		dey
 		bne :-
 		lda #$22
 		sta PPU_nmtAdd+1
-		LDA #$a0
+		LDA #$50
 		sta PPU_nmtAdd
 		jmp @DECnmtUpdateCount
 	@Table6:
-		lda nmtBuffer+768, x
+		cmp #1
+		bne @Table7
+		:
+		lda nmtBuffer+672, x
 		sta nmtBufferConvert-1, y
 		inx
 		dey
-		bne @Table6
+		bne :-
+		lda #$22
+		sta PPU_nmtAdd+1
+		LDA #$C0
+		sta PPU_nmtAdd
+		jmp @DECnmtUpdateCount
+	@Table7:
+		lda nmtBuffer+784, x
+		sta nmtBufferConvert-1, y
+		inx
+		dey
+		bne @Table7
 		lda #$23
 		sta PPU_nmtAdd+1
-		LDA #$20
+		LDA #$30
 		sta PPU_nmtAdd
-		LDA #6
+		LDA #7
 		STA nmtUpdateCount
 		jmp @EndTableConvert
 	@DECnmtUpdateCount:
@@ -1532,7 +1546,7 @@ NMI:
 	STA $2004	;X	
 ;Update Background
 	LDA $2002		;read PPU status to reset high/low latch
-	LDY #128
+	LDY #112
 	LDA PPU_nmtAdd+1
 	STA $2006
 	LDA PPU_nmtAdd
@@ -1657,27 +1671,6 @@ KeyboardMartix_Hex:
 .byte  $00,$00,$61,$62 ;Row7,Col1
 .byte  $00,$04,$0f,$0e ;Row8,Col0
 .byte  $05,$00,$08,$00 ;Row8,Col1
-	
-KeyboardMartix:
-;Col   $01,$02,$03,$04 
-.byte  $00,$0d,$5b,$5d ;Row0,Col0
-.byte  $00,$00,$36,$18 ;Row0,Col1
-.byte  $00,$40,$3a,$3b ;Row1,Col0
-.byte  $5f,$2f,$2d,$5e ;Row1,Col1
-.byte  $00,$4f,$4c,$4b ;Row2,Col0
-.byte  $2e,$2c,$50,$30 ;Row2,Col1
-.byte  $00,$49,$55,$4a ;Row3,Col0
-.byte  $4d,$4e,$39,$38 ;Row3,Col1
-.byte  $00,$59,$47,$48 ;Row4,Col0
-.byte  $42,$56,$37,$36 ;Row4,Col1
-.byte  $00,$54,$52,$44 ;Row5,Col0
-.byte  $46,$43,$35,$34 ;Row5,Col1
-.byte  $00,$57,$53,$41 ;Row6,Col0
-.byte  $58,$5a,$45,$33 ;Row6,Col1
-.byte  $00,$1B,$51,$00 ;Row7,Col0
-.byte  $00,$00,$31,$32 ;Row7,Col1
-.byte  $02,$04,$0f,$0e ;Row8,Col0
-.byte  $05,$20,$08,$00 ;Row8,Col1
 
 .segment "VECTORS"
 	.word NMI
