@@ -1,3 +1,4 @@
 # NesMemViewer
-A Nes rom for check the content of Nes memory.
-Can use both Family keyboard or Gamepad to input memory address.
+This program is written in CA65 assembly language and is used to edit the memory of the NES (Nintendo Entertainment System). 
+It can set the program counter to execute the machine code program that has been written.
+It support both Family keyboard and Gamepad to input memory address.
